@@ -1,0 +1,54 @@
+<!-- Seção do cabeçalho, imports de CSS e scripts -->
+<%- include('layout/header') %>
+<link rel="stylesheet" type="text/css" href="/css/style.css" />
+<div class="container">
+  <div class="row my-4">
+    <div class="col-lg-12">
+      <h3>Inserir Presença dos Alunos</h3>
+      <!-- Formulário para inserir presença dos alunos -->
+      <form action="/inserir-presenca" method="POST">
+        <!-- Campo para selecionar o campus -->
+        <div class="form-group">
+          <label for="campus">Campus:</label>
+          <input type="text" id="campus" name="campus" class="form-control" required>
+        </div>
+
+        <!-- Campo para selecionar a disciplina -->
+        <div class="form-group">
+          <label for="disciplina">Disciplina:</label>
+          <select id="disciplina" name="disciplina" class="form-control" required>
+            <!-- Opções de disciplina aqui (serão preenchidas dinamicamente) -->
+          </select>
+        </div>
+
+        <!-- Campo para selecionar a data -->
+        <div class="form-group">
+          <label for="data">Data:</label>
+          <input type="date" id="data" name="data" class="form-control" required>
+        </div>
+
+        <!-- Campo para selecionar o aluno -->
+        <div class="form-group">
+          <label for="aluno">Alunos:</label>
+          <div id="alunos-checkboxes">
+            <!-- Checkboxes dos alunos serão preenchidas dinamicamente -->
+          </div>
+        </div>
+        
+        <!-- Outros campos do formulário -->
+        <button type="submit" class="btn btn-primary">Inserir Presença</button>
+      </form>
+
+      <!-- Formulário para importar arquivo -->
+      <h3>Importar Arquivo</h3>
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="fileInput">Selecione um arquivo:</label>
+          <input type="file" class="form-control-file" id="fileInput" name="arquivo">
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar Arquivo</button>
+      </form>
+
+    </div>
+  </div>
+</div>

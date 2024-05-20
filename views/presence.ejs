@@ -1,0 +1,190 @@
+<!-- Seção do cabeçalho, imports de CSS e scripts -->
+<%- include('layout/header') %>
+<link rel="stylesheet" type="text/css" href="/css/style.css" />
+<div class="container" style="margin-top: 20px;">
+  <div class="row my-4">
+    <div class="col-lg-12">
+      <h3 style="margin-bottom: 20px;">Presença dos alunos</h3>
+      <!-- Formulário para inserir presença dos alunos -->
+      <form id="formulario">
+        <!-- Campo para selecionar o campus -->
+        <div class="form-group">
+          <label for="campus">Campus:</label>
+          <select id="campus" name="campus" class="form-control" required>
+            <option value="" disabled selected>Selecione um campus</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="turmas">Turma:</label>
+          <select id="turmas" name="turmas" class="form-control" required>
+            <option value="" disabled selected>Selecione uma turma</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="disciplina">Disciplina:</label>
+          <select id="disciplina" name="disciplina" class="form-control" required>
+            <option value="" disabled selected>Selecione uma disciplina</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="data">Data:</label>
+          <input type="date" id="data" name="data" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <div id="alunos-checkboxes">
+          </div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="buscarr()">Buscar Presença</button>
+      </form>
+      <% console.log(title) %>
+    </div>
+  </div>
+</div>
+
+<div class="container" style="margin-top: 20px;">
+  <div class="row my-4">
+    <div class="col-lg-12">
+      <div class="form-group">
+        <label for="presenca-alunos">Presença dos Alunos:</label>
+        <textarea id="custom-textbox" class="form-control" disabled></textarea>
+      </div>
+      <div class="form-group">
+        <label for="anotacoes">Anotações:</label>
+        <textarea id="anotacoes" class="form-control" disabled></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+ let turmasId = []
+  fetch('/dados-professor')
+    .then(response => response.json())
+    .then(data => {
+      var disciplinaSelect = document.getElementById('disciplina');
+      var campusSelect = document.getElementById('campus');
+      var turmasSelect = document.getElementById('turmas');
+
+      data.disciplinas.forEach(disciplina => {
+        var option = document.createElement('option');
+        option.value = disciplina._id; 
+        option.textContent = disciplina.nome; 
+        disciplinaSelect.appendChild(option);
+      });
+      let turmas = []
+      data.campus.forEach(campus => {
+        var option = document.createElement('option');
+        option.value = campus._id; 
+        option.textContent = campus.nome; 
+        campusSelect.appendChild(option);
+        turmas = campus.turmas
+      });
+      data.turmas.forEach(turma => {
+        console.log(turma)
+        turmasId.push(turma)
+      });
+
+    })
+    .catch(error => {
+      console.error('Erro ao buscar as disciplinas:', error);
+    });
+
+
+    async function getTurmas(){
+      const campusId = document.getElementById('campus').value;
+      var turmasSelect = document.getElementById('turmas');
+      turmasSelect.innerHTML = '';
+      var option = document.createElement('option');
+      option.textContent = 'Selecione uma turma' 
+      option.disabled = true;
+      option.selected = true;
+      turmasSelect.appendChild(option)
+      turmasId.map(async turma => {
+        const response = await fetch(`/nome-turma/${campusId}/${turma}`);
+        const response_json = await response.json();
+        const numero = response_json[0]
+        if (numero != undefined){
+          var option = document.createElement('option');
+          option.value = turma;
+          option.textContent = numero; 
+          turmasSelect.appendChild(option); 
+          console.log("response: ",  numero)
+        }
+        else{
+          console.log('indefinido')
+        }
+      });
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+    var selectElement = document.getElementById("campus");
+
+    selectElement.addEventListener("change", function() {
+      var selectedOption = this.options[this.selectedIndex].value;
+      getTurmas()
+      // Faça algo com a opção selecionada aqui
+    });
+  });
+
+  function getNomeAlunoById(jsonData, alunoId) {
+    for (let turma of jsonData[0].campus.turmas) {
+        for (let aluno of turma.alunos) {
+            if (aluno._id === alunoId) {
+                return aluno.nome;
+            }
+        }
+    }
+    return null; 
+    }
+
+  async function buscarr() {
+    const campusId = document.getElementById('campus').value;
+    const turma = document.getElementById('turmas').value;
+    const data = document.getElementById('data').value;
+    const textbox = document.getElementById('custom-textbox');
+    const anotacoes = document.getElementById('anotacoes');
+    textbox.value = ""
+    anotacoes.value = "";
+    console.log(data)
+    console.log(turma)
+    console.log(campusId)
+    const response = await fetch(`/teste-aluno/${data}/${turma}/${campusId}`);
+    const response_json = await response.json();
+    if (response_json.length != 0){
+  
+    for (var chave in response_json) {
+            if (response_json.hasOwnProperty(chave)) {
+              console.log(chave)
+              if (chave == "anotacao"){
+                console.log("aqui")
+                break
+              }
+              var valor = response_json[chave];
+              var valorAtual = textbox.value;
+              valorAtual += `- ${chave}:` + ` ${valor}%` + '\n'; 
+              console.log(valorAtual)
+              textbox.value = valorAtual
+            }
+        }
+    anotacoes.value = response_json['anotacao']
+    }
+  else{
+    alert('Não há presenças para esta data')
+  }
+
+
+  }
+  var form = document.getElementById('formulario');
+  form.addEventListener('submit', function(event) {
+
+    event.preventDefault();
+  });
+   
+</script>
+
+<!-- Seção do rodapé e outros scripts -->
+
+<%- include('layout/footer') %>

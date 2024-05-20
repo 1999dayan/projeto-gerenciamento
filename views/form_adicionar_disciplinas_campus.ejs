@@ -1,0 +1,151 @@
+<%- include('layout/header') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1><%= title %></h1>
+    <form action="/adicionar-disciplinas-campus" method="POST" onsubmit="return validarFormulario()">
+        <label for="professor">Selecione o Professor:</label>
+        <select id="professorId" name="professorId">
+            <!-- Preencha as opções com os professores recuperados do banco de dados -->
+            <% professors.forEach(professor => { %>
+                <option value="<%= professor._id %>"><%= professor.nome %></option>
+            <% }); %>
+        </select>
+        <br><br>
+        <label for="disciplinas">Selecione as Disciplinas:</label>
+        <select id="disciplinas" name="disciplinas" multiple>
+            <% if (Array.isArray(disciplinas)) { %>
+                <% disciplinas.forEach(disciplina => { %>   
+                    <option value="<%= disciplina._id %>"><%= disciplina.nome %></option>
+                <% }); %>
+            <% } %>
+        </select>
+        <label for="campus">Selecione o Campus:</label>
+        <select id="campus" name="campus" multiple onchange="mostrarTurmas()">
+            <!-- Verifique se campus é um array antes de iterar -->
+            <% if (Array.isArray(campus)) { %>
+                <% campus.forEach(campus => { %>
+                    <option value="<%= campus._id %>"><%= campus.nome %></option>
+                <% }); %>
+            <% } %>
+        </select>
+
+        </select>
+        <label for="turma">Selecione a turma:</label>
+        <select id="turma" name="turma" multiple>
+        </select>
+        
+        
+        <br><br>
+        <button type="submit">Adicionar Disciplinas, Campus e Professor</button>
+    </form>
+    
+</body>
+</html>
+<%- include('layout/footer') %>
+
+<script>
+    async function mostrarTurmas() {
+        const campusId = document.getElementById('campus').value;
+        const response = await fetch(`/turmas-campus/${campusId}`);
+        const turmas = await response.json();
+        const turmaSelect = document.getElementById('turma');
+        turmaSelect.innerHTML = ''; // Limpa as opções anteriores
+        turmas.forEach(turma => {
+            const option = document.createElement('option');
+            option.textContent = turma.split(":")[0];
+            option.value = turma.split(":")[1];
+            turmaSelect.appendChild(option);
+        });
+    }
+    function validarFormulario() {
+        const professorId = document.getElementById('professorId').value;
+        const disciplinasSelect = document.getElementById('disciplinas');
+        const campusSelect = document.getElementById('campus');
+        const turmaSelect = document.getElementById('turma');
+        const disciplinas = Array.from(disciplinasSelect.selectedOptions).map(option => option.value);
+        const campus = Array.from(campusSelect.selectedOptions).map(option => option.value);
+        const turma = Array.from(turmaSelect.selectedOptions).map(option => option.value);
+
+        console.log("Professor ID:", professorId);
+        console.log("Disciplinas IDs:", disciplinas);
+        console.log("Campus IDs:", campus);
+
+        // Verificando se todos os campos foram preenchidos
+        if (!professorId) {
+            alert('Por favor, selecione um professor.');
+            return false;
+        }
+
+        if (disciplinas.length === 0 || campus.length === 0) {
+            alert('Por favor, selecione pelo menos uma disciplina e um campus.');
+            return false;
+        }
+
+        // Montando um objeto com os IDs selecionados
+        const dados = {
+            professorId: professorId,
+            disciplinas: disciplinas,
+            campus: campus,
+            turma: turma
+        };
+
+        // Atualizando o valor do campo "dados" com os IDs selecionados em formato JSON
+        document.getElementById('dados').value = JSON.stringify(dados);
+
+        return true;
+    }
+</script>

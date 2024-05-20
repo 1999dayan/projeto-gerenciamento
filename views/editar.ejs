@@ -1,0 +1,313 @@
+<%- include('layout/header') %>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Presença</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <style>
+        .student {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            
+        }
+        .student-name {
+            margin-right: 10px;
+        }
+        .toggle-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .toggle-button.presente {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .toggle-button.falta {
+            background-color: #f44336;
+            color: white;
+        }
+        .custom-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: 0 auto;
+        }
+        .custom-form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .custom-form input[type="text"] {
+            width: calc(100% - 10px);
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .custom-form button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .custom-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    
+    <form id="formulario">
+        <div class="form-group">
+            <label for="professor">Professor:</label>
+            <select id="professor" name="professor" class="form-control" required>
+            <option value="" disabled selected>Selecione um professor</option>
+            <% presencas.forEach(presenca => { %>
+                <option value="<%= presenca._id %>"><%= presenca.nome %></option>
+            <% }) %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="campus">Campus:</label>
+            <select id="campus" name="campus" class="form-control" required>
+            <option value="" disabled selected>Selecione um campus</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="turmas">Turma:</label>
+            <select id="turmas" name="turmas" class="form-control" required>
+            <option value="" disabled selected>Selecione uma turma</option>
+            </select>
+        </div>
+
+        <!-- Campo para selecionar a disciplina -->
+        <div class="form-group">
+            <label for="disciplina">Disciplina:</label>
+            <select id="disciplina" name="disciplina" class="form-control" required>
+            <option value="" disabled selected>Selecione uma disciplina</option>
+            </select>
+        </div>
+
+        <!-- Campo para selecionar a data -->
+        <div class="form-group">
+            <label for="data">Data:</label>
+            <input type="date" id="data" name="data" class="form-control" required>
+        </div>
+
+        <button class="btn btn-primary" onclick="fetchStudents()">Buscar Presença</button>
+
+    </form>
+    <div id="studentList"></div>
+
+
+    <script>
+        var form = document.getElementById('formulario');
+  form.addEventListener('submit', function(event) {
+
+    event.preventDefault();
+  });
+ let turmasId = []
+ let professorSelect = document.getElementById('professor')
+ professorSelect.addEventListener("change", function() {
+  fetch(`/dados-professor/${professorSelect.value}`)
+    .then(response => response.json())
+    .then(data => {
+      var disciplinaSelect = document.getElementById('disciplina');
+      var campusSelect = document.getElementById('campus');
+      var turmasSelect = document.getElementById('turmas');
+      //campusSelect.innerHTML = ''
+      data.disciplinas.forEach(disciplina => {
+        var option = document.createElement('option');
+        option.value = disciplina._id; 
+        option.textContent = disciplina.nome; 
+        disciplinaSelect.appendChild(option);
+      });
+      let turmas = []
+      data.campus.forEach(campus => {
+        var option = document.createElement('option');
+        option.value = campus._id; 
+        option.textContent = campus.nome; 
+        campusSelect.appendChild(option);
+        turmas = campus.turmas
+      });
+      data.turmas.forEach(turma => {
+        console.log(turma)
+        turmasId.push(turma)
+      });
+
+    })
+    .catch(error => {
+      console.error('Erro ao buscar as disciplinas:', error);
+    });
+ })
+    function createEnviarButton() {
+        const button = document.createElement('button');
+        button.textContent = 'Enviar';
+        button.onclick = () => funcionapfv(window.presence_id); // Chama a função funcionapfv() com o ID da presença
+        document.body.appendChild(button); // Adiciona o botão ao final do corpo do documento
+    }
+
+
+    async function getTurmas(){
+      const campusId = document.getElementById('campus').value;
+      var turmasSelect = document.getElementById('turmas');
+      turmasSelect.innerHTML = '';
+      var option = document.createElement('option');
+      option.textContent = 'Selecione uma turma' 
+      option.disabled = true;
+      option.selected = true;
+      turmasSelect.appendChild(option)
+      turmasId.map(async turma => {
+        const response = await fetch(`/nome-turma/${campusId}/${turma}`);
+        const response_json = await response.json();
+        const numero = response_json[0]
+        if (numero != undefined){
+          var option = document.createElement('option');
+          option.value = turma;
+          option.textContent = numero; 
+          turmasSelect.appendChild(option); 
+          console.log("response: ",  numero)
+        }
+        else{
+          console.log('indefinido')
+        }
+      });
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+    var selectElement = document.getElementById("campus");
+
+    selectElement.addEventListener("change", function() {
+      var selectedOption = this.options[this.selectedIndex].value;
+      getTurmas()
+    });
+  });
+        
+
+        async function fetchStudents() {
+            try {
+                const campusId = document.getElementById('campus').value;
+                const turma = document.getElementById('turmas').value;
+                const data = document.getElementById('data').value;
+                const professor = document.getElementById('professor').value;
+                const response = await fetch(`/editar/${professor}/${turma}/${campusId}?dates=${data}`);
+                const students = await response.json();
+
+                const nomeAlunos = await fetch('/nome-alunos/6648ae7dad3ba24f9c65afbd/6648ae6ead3ba24f9c65afb3');
+                const nomesAlunosJson = await nomeAlunos.json();
+                console.log(students);
+                displayStudents(students, nomesAlunosJson);
+            } catch (error) {
+                console.error('Erro ao buscar os dados:', error);
+            }
+        }
+
+
+
+        function getStudentNameById(jsonData, id) {
+        const student = jsonData.find(student => student._id === id);
+        return student ? student.nome : null;
+        }
+
+
+        function displayStudents(students, nomesAlunosJson) {
+            const studentList = document.getElementById('studentList');
+            studentList.innerHTML = ''; // Limpar lista existente
+
+            for (const [id, status] of Object.entries(students)) {
+                if(id === "presence_id"){
+                    const studentDiv = document.createElement('div');
+                    studentDiv.className = 'student';
+                    window.presence_id = status;
+                    createEnviarButton();
+                    continue;
+                }
+                const studentDiv = document.createElement('div');
+                studentDiv.className = 'student';
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'student-name';
+                nameSpan.textContent = getStudentNameById(nomesAlunosJson, id);
+
+                const button = document.createElement('button');
+                button.className = `toggle-button ${status === 1 ? 'presente' : 'falta'}`;
+                button.textContent = status === 1 ? 'Presente' : 'Falta';
+                button.setAttribute('data-id', id);
+                button.onclick = () => toggleStatus(button, id);
+
+                studentDiv.appendChild(nameSpan);
+                studentDiv.appendChild(button);
+                studentList.appendChild(studentDiv);
+                
+            }
+        }
+
+        function toggleStatus(button, id) {
+            if (button.textContent === 'Presente') {
+                button.textContent = 'Falta';
+                button.classList.remove('presente');
+                button.classList.add('falta');
+            } else {
+                button.textContent = 'Presente';
+                button.classList.remove('falta');
+                button.classList.add('presente');
+                // Aqui você pode fazer uma requisição para atualizar o status no servidor, se necessário.
+                // Por exemplo:
+                // updateStatus(id, 1);
+            }
+        }
+
+        function getPresentStudents() {
+            const presentStudents = [];
+            const buttons = document.querySelectorAll('.toggle-button.presente');
+            buttons.forEach(button => {
+                presentStudents.push(button.getAttribute('data-id'));
+            });
+            return presentStudents;
+        }
+
+        function funcionapfv(presence_id) {
+        console.log(presence_id);
+        if (!presence_id) {
+            console.error('ID da presença não fornecido');
+            return;
+        }
+
+        const url = `/presenca/${presence_id}`;
+        const presencas = getPresentStudents(); // Assuming getPresentStudents() returns the array of presences
+
+        const options = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ presencas: presencas }) // Sending the array of presences as an object with key 'presencas'
+        };
+
+        fetch(url, options)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao atualizar presença');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Presença atualizada com sucesso:', data);
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar presença:', error);
+            });
+    }
+
+        
+    </script>
+</body>
+</html>
+<%- include('layout/footer') %>

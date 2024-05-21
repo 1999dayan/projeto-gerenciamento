@@ -2,60 +2,64 @@
 <%- include('layout/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/style.css" />
+
 <div class="container" style="margin-top: 20px;">
   <div class="row my-4">
     <div class="col-lg-12">
-      <h3 style="margin-bottom: 20px;">Presença dos alunos</h3>
-      <!-- Formulário para inserir presença dos alunos -->
-      <form id="formulario">
-        <!-- Campo para selecionar o campus -->
-
-        <div class="form-group">
-          <label for="professor">Professor:</label>
-          <select id="professor" name="professor" class="form-control" required>
-            <option value="" disabled selected>Selecione um professor</option>
-            <% presencas.forEach(presenca => { %>
-              <option value="<%= presenca._id %>"><%= presenca.nome %></option>
-            <% }) %>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="campus">Campus:</label>
-          <select id="campus" name="campus" class="form-control" required>
-            <option value="" disabled selected>Selecione um campus</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="turmas">Turma:</label>
-          <select id="turmas" name="turmas" class="form-control" required>
-            <option value="" disabled selected>Selecione uma turma</option>
-          </select>
-        </div>
-
-        <!-- Campo para selecionar a disciplina -->
-        <div class="form-group">
-          <label for="disciplina">Disciplina:</label>
-          <select id="disciplina" name="disciplina" class="form-control" required>
-            <option value="" disabled selected>Selecione uma disciplina</option>
-          </select>
-        </div>
-
-        <!-- Campo para selecionar a data -->
-        <div class="form-group">
-          <label for="data">Data:</label>
-          <input type="date" id="data" name="data" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-          <div id="alunos-checkboxes">
+      <div class="presenca-admin">
+        <h3 style="margin-bottom: 20px;">Presença dos Alunos</h3>
+        <!-- Formulário para inserir presença dos alunos -->
+        <form id="formulario">
+          <!-- Campo para selecionar o professor -->
+          <div class="form-group">
+            <label for="professor">Professor:</label>
+            <select id="professor" name="professor" class="form-control" required>
+              <option value="" disabled selected>Selecione um professor</option>
+              <% presencas.forEach(presenca => { %>
+                <option value="<%= presenca._id %>"><%= presenca.nome %></option>
+              <% }) %>
+            </select>
           </div>
-        </div>
-        
-        <button class="btn btn-primary" onclick="buscarr()">Buscar Presença</button>
-      </form>
-      <% console.log(title) %>
+
+          <!-- Campo para selecionar o campus -->
+          <div class="form-group">
+            <label for="campus">Campus:</label>
+            <select id="campus" name="campus" class="form-control" required>
+              <option value="" disabled selected>Selecione um campus</option>
+            </select>
+          </div>
+
+          <!-- Campo para selecionar a turma -->
+          <div class="form-group">
+            <label for="turmas">Turma:</label>
+            <select id="turmas" name="turmas" class="form-control" required>
+              <option value="" disabled selected>Selecione uma turma</option>
+            </select>
+          </div>
+
+          <!-- Campo para selecionar a disciplina -->
+          <div class="form-group">
+            <label for="disciplina">Disciplina:</label>
+            <select id="disciplina" name="disciplina" class="form-control" required>
+              <option value="" disabled selected>Selecione uma disciplina</option>
+            </select>
+          </div>
+
+          <!-- Campo para selecionar a data -->
+          <div class="form-group">
+            <label for="data">Data:</label>
+            <input type="date" id="data" name="data" class="form-control" required>
+          </div>
+
+          <!-- Campo para os checkboxes dos alunos -->
+          <div class="form-group">
+            <div id="alunos-checkboxes"></div>
+          </div>
+          
+          <!-- Botão para buscar presença -->
+          <button type="button" class="btn btn-primary" onclick="buscarr()">Buscar Presença</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
@@ -63,17 +67,23 @@
 <div class="container" style="margin-top: 20px;">
   <div class="row my-4">
     <div class="col-lg-12">
-      <div class="form-group">
-        <label for="presenca-alunos">Presença dos Alunos:</label>
-        <textarea id="custom-textbox" class="form-control" disabled></textarea>
-      </div>
-      <div class="form-group">
-        <label for="anotacoes">Anotações:</label>
-        <textarea id="anotacoes" class="form-control" disabled></textarea>
+      <div class="presenca-admin">
+        <!-- Campo para exibir a presença dos alunos -->
+        <div class="form-group">
+          <label for="presenca-alunos">Presença dos Alunos:</label>
+          <textarea id="custom-textbox" class="form-control" disabled></textarea>
+        </div>
+
+        <!-- Campo para anotações -->
+        <div class="form-group">
+          <label for="anotacoes">Anotações:</label>
+          <textarea id="anotacoes" class="form-control" disabled></textarea>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
 <script>
  
  let turmasId = []

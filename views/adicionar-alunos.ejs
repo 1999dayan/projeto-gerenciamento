@@ -4,6 +4,7 @@
 <div class="container">
   <div class="row my-4">
     <div class="col-lg-12">
+      <div class="presenca-admin">
       <link rel="stylesheet" type="text/css" href="/css/style.css" />
       <h3>Importar Arquivo</h3>
       <form action="/upload" method="POST" enctype="multipart/form-data">
@@ -20,6 +21,8 @@
     </div>
   </div>
 </div>
+</div>
+
 <script>
   fetch('/get-campus')
     .then(response => response.json())

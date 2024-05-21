@@ -4,58 +4,58 @@
 <link rel="stylesheet" type="text/css" href="/css/style.css" />
 
 <div class="container" style="margin-top: 20px;">
-  <div class="row my-4">
-    <div class="col-lg-12">
-      
-      <h3 style="margin-bottom: 20px;">Inserir Presença dos Alunos</h3>
-      <!-- Formulário para inserir presença dos alunos -->
-      <form action="/inserir-presenca" method="POST">
-        <!-- Campo para selecionar o campus -->
-        <div class="form-group">
-          <label for="campus">Campus:</label>
-          <select id="campus" name="campus" class="form-control" required>
-            <option value="" disabled selected>Selecione um campus</option>
-          </select>
-        </div>
+  <div class="presenca-admin">
+    <h3 style="margin-bottom: 20px;">Inserir Presença dos Alunos</h3>
+    <!-- Formulário para inserir presença dos alunos -->
+    <form action="/inserir-presenca" method="POST">
+      <!-- Campo para selecionar o campus -->
+      <div class="form-group">
+        <label for="campus">Campus:</label>
+        <select id="campus" name="campus" class="form-control" required>
+          <option value="" disabled selected>Selecione um campus</option>
+        </select>
+      </div>
 
-        <div class="form-group">
-          <label for="turmas">Turma:</label>
-          <select id="turmas" name="turmas" class="form-control" required>
-            <option value="" disabled selected>Selecione uma turma</option>
-          </select>
-        </div>
+      <!-- Campo para selecionar a turma -->
+      <div class="form-group">
+        <label for="turmas">Turma:</label>
+        <select id="turmas" name="turmas" class="form-control" required>
+          <option value="" disabled selected>Selecione uma turma</option>
+        </select>
+      </div>
 
-        <!-- Campo para selecionar a disciplina -->
-        <div class="form-group">
-          <label for="disciplina">Disciplina:</label>
-          <select id="disciplina" name="disciplina" class="form-control" required>
-            <option value="" disabled selected>Selecione uma disciplina</option>
-          </select>
-        </div>
+      <!-- Campo para selecionar a disciplina -->
+      <div class="form-group">
+        <label for="disciplina">Disciplina:</label>
+        <select id="disciplina" name="disciplina" class="form-control" required>
+          <option value="" disabled selected>Selecione uma disciplina</option>
+        </select>
+      </div>
 
-        <!-- Campo para selecionar a data -->
-        <div class="form-group">
-          <label for="data">Data:</label>
-          <input type="date" id="data" name="data" class="form-control" required>
-        </div>
+      <!-- Campo para selecionar a data -->
+      <div class="form-group">
+        <label for="data">Data:</label>
+        <input type="date" id="data" name="data" class="form-control" required>
+      </div>
 
-        <div class="form-group">
-          <div id="alunos-checkboxes">
-          </div>
-        </div>
+      <!-- Campo para os checkboxes dos alunos -->
+      <div class="form-group">
+        <div id="alunos-checkboxes"></div>
+      </div>
 
-        <form>
-          <p><label for="w3review">Anotações</label></p>
-          <textarea id="w3review" name="w3review" rows="4" cols="50"></textarea>
-          <br>
-        </form>
-        
-        <button class="btn btn-primary" onclick="enviarr()">Inserir Presença</button>
-      </form>
-      <% console.log(title) %>
-    </div>
+      <!-- Campo para anotações -->
+      <div class="form-group">
+        <p><label for="w3review">Anotações</label></p>
+        <textarea id="w3review" name="w3review" rows="4" cols="50" class="form-control"></textarea>
+      </div>
+
+      <!-- Botão para inserir presença -->
+      <button type="submit" class="btn btn-primary">Inserir Presença</button>
+    </form>
+    <% console.log(title) %>
   </div>
 </div>
+
 
 <!-- Seção de scripts -->
 <!-- Script para preencher dinamicamente o campo de disciplina com base nos professores -->

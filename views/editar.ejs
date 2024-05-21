@@ -11,16 +11,21 @@
             display: flex;
             align-items: center;
             margin-bottom: 10px;
+        
             
         }
         .student-name {
             margin-right: 10px;
+            flex-grow: 1; /* Permite que o nome do aluno ocupe o espaço restante */
+            min-width: 150px;
         }
         .toggle-button {
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            
+            
         }
         .toggle-button.presente {
             background-color: #4CAF50;
@@ -55,6 +60,7 @@
             padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
+           
         }
         .custom-form button:hover {
             background-color: #0056b3;
@@ -62,6 +68,8 @@
     </style>
 </head>
 <body>
+    <div class="presenca-admin">
+        <h3>Editar presença</h3>
     
     <form id="formulario">
         <div class="form-group">
@@ -101,11 +109,12 @@
             <label for="data">Data:</label>
             <input type="date" id="data" name="data" class="form-control" required>
         </div>
-
+    </div>
+    <div class="presenca-admin">
         <button class="btn btn-primary" onclick="fetchStudents()">Buscar Presença</button>
-
-    </form>
-    <div id="studentList"></div>
+     </form>
+     <div id="studentList"></div>
+   </div>
 
 
     <script>
